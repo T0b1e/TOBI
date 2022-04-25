@@ -32,39 +32,15 @@ async def list(ctx):  # Contact list word
     embed.add_field(name="Basic", value=
     "TOBI but in json file\n"
     "**Network**        for Check TOBI Network (.ms)\n"
-    "**userinfo**       for Check user information (Join server, Role)\n"
-    "**search**         for Search something on wikipedia)\n"
-    "**gacha _ _**      for random number from fisrt to second\n"
-    "**prize _ _**      for Give away prize from Admin by set time and prize\n"
-    "**poll**           for vote Good or Bad (No limit user)\n"
     "**spawn**          for spawn TOBI to channel\n"
     "**weather**        for check weather today\n"
     "**covid**          for check daily covid\n"
-    "**covid_stat**     for Covid stat in duration by Graph and total\n"
-    "**lotetry**        for lotetry today\n"
-    "**bomb**           for delete message in channel\n")
-    embed.add_field(name="Report", value=
-    "**report**         for report User by Issue to Admin to discuss and Vote\n")
-    embed.add_field(name="Math", value=
-    "**plus _ _**       for plus the numbers\n"
-    "**minus _ _**      for minus the numbers\n"
-    "**multiplie _ _**  for multiplie the numbers\n"
-    "**divide __**      for divide the numbers\n"
-    "**sqrt __**        for Square root the numbers\n"
-    "**expo __**        for exponent the numbers\n"
-    "**fac __**        for factorial the numbers\n")
+    "**covid_stat**     for Covid stat in duration by Graph and total\n")
     embed.add_field(name="Audio", value=
     "**play 'url'**     for play song\n"
     "**stop**           for stop song\n"
     "**pause**          for pause song\n"
     "**resume**         for resume song\n" )
-    embed.add_field(name="ADMIN", value=
-    "only Admin or mod can acess this permission\n"
-    "**mute @___**      for muted someone\n"
-    "**unmute @___**    for unmuted someone\n"
-    "**kick @___**      for kick someone from the server\n"
-    "**ban @___**       for ban someone from the server\n"
-    "**vote**           for vote member when Vote was started\n")
     embed.add_field(name="Tobi", value=
     "**tobiinfo**       for TOBI information\n"
     "**git**            for GitHub\n"
