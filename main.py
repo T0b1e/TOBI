@@ -4,6 +4,7 @@ import os  # play os
 
 import matplotlib.pyplot as plt
 import youtube_dl 
+import datetime
 import time  # Class,Count
 import requests
 import json
@@ -20,9 +21,7 @@ client = commands.Bot(command_prefix="=")
 @client.event
 async def on_ready():  # Event client ready
     await client.change_presence(status=discord.Status.idle,activity=discord.Game('=list')) #Change status to =help
-    print("ID :" , client.user.id)
     print(f'Running on {len(client.guilds)} server')
-    print(time.strftime("%a, %d %b %Y %H:%M:%S"))
     print(f'{client.user.name} is online')  # Print TOBI is online
     print('='*50)
 
@@ -54,11 +53,16 @@ async def Network(ctx): #Network
     print(f'Network command activated by {ctx.author.name} status {latency} on server {ctx.author.guild.name}')
     await ctx.send(f"Network = {latency}ms")
 
+
+
 @client.event 
-async def on_member_join(member): # join
-    role = discord.utils.get(member.server.roles,name = 'USERS') 
-    await client.add_roles(member, role) #Give user USER role to new member
-    print(f'{member} has joined the server.') #TODO
+async def on_member_join(member):
+ 
+    with open('joined.txt', 'w') as f: # {ctx.guild.name}
+        f.writelines(f'[, {member}, {datetime.date.today()}, {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}],')
+
+    print((f'[, {member}, {datetime.date.today()}, {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}],'))
+    # await client.add_roles(member, role) #Give user USER role to new member
 
 @client.event
 async def on_member_remove(member): # remove
