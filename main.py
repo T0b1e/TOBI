@@ -1,13 +1,17 @@
 import discord
 from discord.ext import commands
-import os  # play os
+
+import os 
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 import matplotlib.pyplot as plt
 import youtube_dl 
 import datetime
-import time  # Class,Count
+import time 
 import requests
 import json
+
 
 try:
     with open('discord_py/SECRET.txt') as f:
@@ -16,7 +20,13 @@ except FileNotFoundError:
     with open('SECRET.txt') as f:
         info = f.readlines()
 
-client = commands.Bot(command_prefix="=")
+scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name('tobi-348315-fa9ceafcf825.json', scope)
+client =  gspread.authorize(creds)
+sheet = client.open('TOBI.log').sheet1
+
+intents = discord.Intents(messages=True, guilds=True, members=True)
+client = commands.Bot(command_prefix="=", intents=intents, case_insensitive=True)
 
 @client.event
 async def on_ready():  # Event client ready
@@ -46,23 +56,19 @@ async def list(ctx):  # Contact list word
     "**updateinfo**     for TOBI update command or function\n")
     await ctx.send(embed=embed)
 
-
-@client.command(description="Gets the bot's latency.")
-async def Network(ctx): #Network
-    latency = round(client.latency * 1000, 1)
-    print(f'Network command activated by {ctx.author.name} status {latency} on server {ctx.author.guild.name}')
-    await ctx.send(f"Network = {latency}ms")
-
-
-
 @client.event 
 async def on_member_join(member):
- 
-    with open('joined.txt', 'w') as f: # {ctx.guild.name}
-        f.writelines(f'[, {member}, {datetime.date.today()}, {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}],')
+    i = 1
+    while True:
+        if not sheet.row_values(i):
+            word = [str(member.guild), str(member), str(member.id), str(datetime.date.today()), f'{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}']
 
-    print((f'[, {member}, {datetime.date.today()}, {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}],'))
-    # await client.add_roles(member, role) #Give user USER role to new member
+            sheet.insert_row(word, i)
+            break
+        else:
+            pass
+
+        i += 1
 
 @client.event
 async def on_member_remove(member): # remove
@@ -184,7 +190,6 @@ async def kick(ctx, member :discord.Member, *,reason = "Kick because you don't f
     print(f'Kick command activated by {ctx.author.name} to {member} on channel {ctx.channel.name} server {ctx.author.guild.name}')
     await member.kick(reason=reason)
 
-
 @client.command() #Ban
 async def ban(ctx, member :discord.Member, *,reason = "Ban because you don't follow the rules"):
     print(f'Ban command activated by {ctx.author.name} to {member} on channel {ctx.channel.name} server {ctx.author.guild.name}')
@@ -204,14 +209,12 @@ async def tobiinfo(ctx):
     em.add_field(name='Report reqest',value='https://forms.gle/2yhJfcPBpTbmWsFbA')
     await ctx.send(embed = em)
 
-
 @client.command()  # git
 async def git(ctx):
     print(f'Git command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}')
     em = discord.Embed(title = "Github repo", description = "Use '=git'",color = ctx.author.color)
     em.add_field(name = "Github",value="https://github.com/T0b1e/Discord.tob.git")
     await ctx.send(embed = em)
-
 
 @client.command()  # poll
 async def poll(ctx,*,message):
@@ -223,7 +226,6 @@ async def poll(ctx,*,message):
     await msg.add_reaction('👎')
     x = len(message.reactions)
     print(x)
-
 
 @client.command() #Vote
 async def vote(ctx, member :discord.Member):
@@ -279,7 +281,6 @@ async def play(ctx, url):
             os.rename(file, "song.mp3")
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
 
-
 @client.command()  # leave
 async def leave(ctx):
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)   
@@ -288,7 +289,6 @@ async def leave(ctx):
         await voice.disconnect()
     else:
         await ctx.send("The bot is not connected to a voice channel.")
-
 
 @client.command()  # pause
 async def pause(ctx):
@@ -302,7 +302,6 @@ async def pause(ctx):
     else:
         await ctx.send("Currently no audio is playing.")
 
-
 @client.command()  # resume
 async def resume(ctx):
     embed_resume = discord.Embed(title = f'Resume the song song',description = 'Playing music in queue',color = ctx.author.color)
@@ -314,7 +313,6 @@ async def resume(ctx):
         voice.resume()
     else:
         await ctx.send("The audio is not paused.")
-
 
 @client.command()  # stop
 async def stop(ctx):
