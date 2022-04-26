@@ -73,6 +73,16 @@ async def on_member_join(member):
 
 @client.event
 async def on_member_remove(member): # remove
+    i = 1
+    while True:
+        if str(member) == str(sheet.cell(i, 2).value):
+            sheet.update_cell(i, 6, str(datetime.date.today()))
+            break
+        else:
+            pass
+
+        i += 1
+
     print(f'{member} has removed the server.')
 
 @client.command() # ping pong
