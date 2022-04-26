@@ -69,6 +69,7 @@ async def on_member_join(member):
             pass
 
         i += 1
+    print(f'{member} join {member.guild}')
 
 @client.event
 async def on_member_remove(member): # remove
