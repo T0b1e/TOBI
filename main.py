@@ -1,3 +1,5 @@
+from multiprocessing import Value
+from turtle import title
 import discord
 from discord.ext import commands
 
@@ -59,14 +61,17 @@ async def list(ctx):  # Contact list word
 
 @client.event 
 async def on_member_join(member):
-    i = 1
+    i = 2
     while True:
-        if not sheet.row_values(i):
-            word = [str(member.guild), str(member), str(member.id), str(datetime.date.today()), f'{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}']
-            sheet.insert_row(word, i)
-            break
+        if str(sheet.cell(i, 2).value) == str(member):
+            break         
         else:
-            pass
+            if not sheet.row_values(i):
+                word = [str(member.guild), str(member), str(member.id), str(datetime.date.today()), f'{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}']
+                sheet.insert_row(word, i)
+                break
+            else:
+                pass
         i += 1
 
 @client.event
@@ -191,7 +196,23 @@ async def report(ctx, member : discord.Member = None, text = None):
 
         row += 1
         col += 1
-    
+
+@client.command()
+async def check_report(ctx, member : discord.Member):
+    embed = discord.Embed(title = 'Report Status',color = ctx.author.color)
+    embed.add_field(name= 'Information',value= f'Username: {member} ID: {member.id}')
+    row = 2
+    if member != None:
+        while True:
+            if str(member) == str(secondSheet.cell(row, 2).value):
+                embed.add_field(name= 'Reported Time',value = f'You have been reported {int(secondSheet.cell(row, 4).value)} times')
+            else:
+                embed.add_field(name= "you're nicest person ever in this server", value='no one have been reported you before, keep nice')
+            await ctx.send(embed=embed)
+            break
+    else:
+        pass
+
 @client.command(pass_context = True)
 async def spawn(ctx):
     if(ctx.author.voice):
