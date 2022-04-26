@@ -24,6 +24,7 @@ scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/aut
 creds = ServiceAccountCredentials.from_json_keyfile_name('tobi-348315-fa9ceafcf825.json', scope)
 client =  gspread.authorize(creds)
 sheet = client.open('TOBI.log').sheet1
+secondSheet = client.open('TOBI.log').worksheet("Reported Log")
 
 intents = discord.Intents(messages=True, guilds=True, members=True)
 client = commands.Bot(command_prefix="=", intents=intents, case_insensitive=True)
@@ -227,17 +228,6 @@ async def git(ctx):
     em.add_field(name = "Github",value="https://github.com/T0b1e/Discord.tob.git")
     await ctx.send(embed = em)
 
-@client.command()  # poll
-async def poll(ctx,*,message):
-    print(f'Poll command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}')
-    em = discord.Embed(title = "Vote", description = f"{message}",color = ctx.author.color)
-    em.add_field(name = "Poll",value="I vote bote of them so it will count 1 first")
-    msg = await ctx.channel.send(embed=em)
-    await msg.add_reaction('👍')
-    await msg.add_reaction('👎')
-    x = len(message.reactions)
-    print(x)
-
 @client.command() #Vote
 async def vote(ctx, member :discord.Member):
     print(f'Vote command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}')
@@ -245,6 +235,46 @@ async def vote(ctx, member :discord.Member):
     time.sleep(10)
     await ctx.channel.purge(limit=2)
 
+@client.command()
+@commands.has_permissions(ban_members = True)
+async def report(ctx, member : discord.Member = None, text = None):
+    row = 2
+    col = 5
+    while True:
+        
+        """if str(secondSheet.cell(row, 2).value) == str(member):
+            if not secondSheet.cell(row, 4).value:
+                newCount = secondSheet.cell(row, 4).value + 1
+            secondSheet.update_cell(row, 2, newCount)
+            if not secondSheet.row_values(col):
+                secondSheet.update_cell(row, col, text)
+            else:
+                pass"""
+        if not secondSheet.row_values(row):
+            try:
+                word = [str(member.guild), str(member), str(member.id), 1, str(text)]
+                secondSheet.insert_row(word, row)
+                await ctx.send('reported')
+                break
+            except AttributeError:
+                await ctx.send('User Not Found (Ex : =report TOBI#7555)')
+                break
+        if str(member) == str(secondSheet.cell(row, 2).value):
+            if int(secondSheet.cell(row, 4).value) >= 10:
+                await ctx.send('You Made Too Much Troble')
+                await ctx.send('You receive TIMEOUT(24.hr) in 5 minute :)') 
+                await member.ban(reason=text)
+                secondSheet.update_cell(row, 4, 1)
+                break
+
+            else:
+                secondSheet.update_cell(row, 4, int(secondSheet.cell(row, 4).value) + 1)
+                await ctx.send('reported')
+                break
+
+        row += 1
+        col += 1
+    
 @client.command(pass_context = True)  # spawn
 async def spawn(ctx):
 
