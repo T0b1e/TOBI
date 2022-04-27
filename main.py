@@ -1,14 +1,10 @@
-from multiprocessing import Value
-from turtle import title
 import discord
 from discord.ext import commands
 
-import os 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 import matplotlib.pyplot as plt
-import youtube_dl 
 import datetime
 import time 
 import requests
@@ -85,6 +81,40 @@ async def on_member_remove(member): # remove
             pass
         i += 1
 
+def spam(message):
+    count = 1
+    words = []
+
+    for x in (message.content).split():
+        if x in words:
+            count += 1
+            return True
+        
+        if x not in words:
+            words.append(x)
+
+def nitro(message):
+    words = ['Discord Nitro', 'nitro', 'discord nitro', 'free discord nitro', 'free discord', 'free']
+    phrase = []
+    for a in (message.content).split():
+        phrase.append(a)
+    
+    for b in phrase:
+        if b in words:
+            return True
+        if b not in words:
+            pass
+        else:
+            return False
+
+@client.event
+async def on_message(message):
+    if spam(message) == True:
+        await message.delete()
+    
+    if nitro(message) == True:
+        await message.delete()
+    
 @client.command() # ping pong
 async def ping(ctx):
     print(f'Ping command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}') 
@@ -167,35 +197,39 @@ async def git(ctx):
 
 @client.command()
 @commands.has_permissions(ban_members = True)
-async def report(ctx, member : discord.Member = None, text = None):
+async def report(ctx, member : discord.Member = None, *text):
+    print(text)
     row = 2
     col = 5
-    while True:
+    if not text:
+        await ctx.send('Why you report him (Add reason)')
+    else:
+        while True:
 
-        if not secondSheet.row_values(row):
-            try:
-                word = [str(member.guild), str(member), str(member.id), 1, str(text)]
-                secondSheet.insert_row(word, row)
-                await ctx.send('reported')
-                break
-            except AttributeError:
-                await ctx.send('User Not Found (Ex : =report TOBI#7555)')
-                break
-        if str(member) == str(secondSheet.cell(row, 2).value):
-            if int(secondSheet.cell(row, 4).value) >= 10:
-                await ctx.send('You Made Too Much Troble')
-                await ctx.send('You receive TIMEOUT(24.hr) in 5 minute :)') 
-                await member.ban(reason=text)
-                secondSheet.update_cell(row, 4, 1)
-                break
+            if not secondSheet.row_values(row):
+                try:
+                    word = [str(member.guild), str(member), str(member.id), 1, str(' '.join(word))]
+                    secondSheet.insert_row(word, row)
+                    await ctx.send('reported')
+                    break
+                except AttributeError:
+                    await ctx.send('User Not Found (Ex : =report TOBI#7555)')
+                    break
+            if str(member) == str(secondSheet.cell(row, 2).value):
+                if int(secondSheet.cell(row, 4).value) >= 10:
+                    await ctx.send('You Made Too Much Troble')
+                    await ctx.send('You receive TIMEOUT(24.hr) in 5 minute :)') 
+                    await member.ban(reason=' '.join(word))
+                    secondSheet.update_cell(row, 4, 1)
+                    break
 
-            else:
-                secondSheet.update_cell(row, 4, int(secondSheet.cell(row, 4).value) + 1)
-                await ctx.send('reported')
-                break
+                else:
+                    secondSheet.update_cell(row, 4, int(secondSheet.cell(row, 4).value) + 1)
+                    await ctx.send('reported')
+                    break
 
-        row += 1
-        col += 1
+            row += 1
+            col += 1
 
 @client.command()
 async def check_report(ctx, member : discord.Member):
