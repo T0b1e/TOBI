@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord_slash import SlashCommand
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -20,9 +21,9 @@ except FileNotFoundError:
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name('tobi-348315-fa9ceafcf825.json', scope)
-client =  gspread.authorize(creds)
-sheet = client.open('TOBI.log').sheet1
-secondSheet = client.open('TOBI.log').worksheet("Reported Log")
+clients =  gspread.authorize(creds)
+sheet = clients.open('TOBI.log').sheet1
+secondSheet = clients.open('TOBI.log').worksheet("Reported Log")
 
 intents = discord.Intents(messages=True, guilds=True, members=True)
 client = commands.Bot(command_prefix="=", intents=intents, case_insensitive=True)
@@ -81,6 +82,42 @@ async def on_member_remove(member): # remove
             pass
         i += 1
 
+@client.event 
+async def on_command_error(ctx, error): 
+    if isinstance(error, commands.CommandNotFound):
+        print('Command not found') 
+        embed = discord.Embed(title=f"Error!!!", description=f"Command not found.", color=ctx.author.color) 
+        embed.add_field(name="Basic", value=
+        "TOBI but in json file\n"
+        "**Network**        for Check TOBI Network (.ms)\n"
+        "**spawn**          for spawn TOBI to channel\n"
+        "**report**         for check report user\n"
+        "**covid**          for check daily covid\n"
+        "**covid_stat**     for Covid stat in duration by Graph and total\n")
+        embed.add_field(name="Tobi", value=
+        "**tobiinfo**       for TOBI information\n"
+        "**git**            for GitHub\n"
+        "**updateinfo**     for TOBI update command or function\n")
+        secondEmbed = discord.Embed(title=f"=help ___", description=f"Description", color=ctx.author.color) 
+        await ctx.send(embed=embed)
+        await ctx.send(embed=secondEmbed)
+
+@client.command()
+async def helps(ctx, *arg):
+    embed = discord.Embed(title=f"Help command", description=f"=help __", color=ctx.author.color) 
+    if arg == None:
+        embed.add_field('Put command after help command')
+        embed.add_field('=help __')
+    if arg == 'report':
+        embed.add_field('For report user that do bad thing and if that user got report more than 10 time, The server will be punish you by ban')
+        embed.add_field('=report (user#1234) (reason)')
+    if arg == 'covid':
+        embed.add_field('For checking daily covid-19 in thailand')
+        embed.add_field('=covid (No argument requirment)')
+    if arg == 'covid_stat':
+        embed.add_field('For checking stat of covid-19 in thailand')
+        embed.add_field('=covid_stat (No argument requirment)')
+
 def spam(message):
     count = 1
     words = []
@@ -107,13 +144,13 @@ def nitro(message):
         else:
             return False
 
-@client.event
+"""@client.event
 async def on_message(message):
     if spam(message) == True:
         await message.delete()
     
     if nitro(message) == True:
-        await message.delete()
+        await message.delete()"""
     
 @client.command() # ping pong
 async def ping(ctx):
@@ -195,10 +232,14 @@ async def git(ctx):
     em.add_field(name = "Github",value="https://github.com/T0b1e/Discord.tob.git")
     await ctx.send(embed = em)
 
-@client.command()
+@client.command(alias = ['Report', 'REPORT'])
 @commands.has_permissions(ban_members = True)
-async def report(ctx, member : discord.Member = None, *text):
-    print(text)
+async def report(ctx, member : discord.Member, text):
+    print(member, text)
+
+
+
+    """ print('member',member,'text', text) #member Tob#2144 text (สำรอง)#5857 FIXBUG TODO
     row = 2
     col = 5
     if not text:
@@ -229,7 +270,7 @@ async def report(ctx, member : discord.Member = None, *text):
                     break
 
             row += 1
-            col += 1
+            col += 1"""
 
 @client.command()
 async def check_report(ctx, member : discord.Member):
