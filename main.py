@@ -1,3 +1,4 @@
+from posixpath import split
 import discord
 from discord.ext import commands
 from discord_slash import SlashCommand, SlashContext
@@ -9,6 +10,7 @@ import matplotlib.pyplot as plt
 import datetime
 import time 
 import requests
+import random
 import json
 
 
@@ -293,5 +295,29 @@ async def spawn(ctx):
     else:
         await ctx.send("you're not in the voice channel")
     print(f'Spawn command activated by {ctx.author.name} at {channel} on server {ctx.author.guild.name}')
+
+# randomize
+@client.command()
+async def randoms(ctx,*,message):
+    em = discord.Embed(title= "Random Player Given", color=ctx.author.color)
+    em.add_field(name=f"From {message}", value= f"Lucky Person is {random.choices(message.split())[0]}")
+    await ctx.send(embed=em)
+
+@client.command()
+async def randomvc(ctx):
+    em = discord.Embed(title= f"random user from voice chat {ctx.author.voice.channel}", color=ctx.author.color)
+    if(ctx.author.voice):
+
+         # for x in (client.get_channel((ctx.author.voice.channel).id)).members:
+        userInfo = (client.get_channel((ctx.author.voice.channel).id)).members
+        # print(random.choices([str(x) for x in userInfo]))
+            
+        em.add_field(name=f"From {(i for i in [str(x) for x in userInfo])}", value= f"Lucky person is {random.choices([str(x) for x in userInfo])[0]}")
+
+        await ctx.send(embed=em)
+
+    else:
+        await ctx.send("you're not in Voice chat yet")
+        
 
 client.run(int(info[1], 2).to_bytes((int(info[1], 2).bit_length() + 7) // 8, 'big').decode())
