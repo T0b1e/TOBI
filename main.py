@@ -226,10 +226,11 @@ async def tobiinfo(ctx):
 
     await ctx.send(embed = em)
 
-@slash.slash(name='git', description='git command')
-async def git(ctx : SlashContext):
+@client.command()
+async def git(ctx):
     em = discord.Embed(title = "Github repo", description = "Use '=git'",color = ctx.author.color)
-    em.add_field(name = "Github",value="https://github.com/T0b1e/Discord.tob.git")
+    em.add_field(name = "Github (Old version)",value="https://github.com/T0b1e/Discord.tob")
+    em.add_field(name = "Github (New version)",value="https://github.com/T0b1e/TOBI")
     await ctx.send(embed = em)
 
 @client.command(alias = ['Report', 'REPORT'])
@@ -286,15 +287,15 @@ async def check_report(ctx, member : discord.Member):
     else:
         pass
 
-@client.command(pass_context = True)
+@client.command(pass_context=True)
 async def spawn(ctx):
-    if(ctx.author.voice):
-        channel = ctx.message.author.voice.channel
-       
-        await channel.connect()
-    else:
-        await ctx.send("you're not in the voice channel")
-    print(f'Spawn command activated by {ctx.author.name} at {channel} on server {ctx.author.guild.name}')
+    author = ctx.message.author
+    channel = author.voice_channel
+
+    print(f'Spawn command activated by {ctx.author.name} at {ctx.author.voice.channel} on server {ctx.author.guild.name}')
+
+    await client.join_voice_channel(channel)
+
 
 # randomize
 @client.command()
