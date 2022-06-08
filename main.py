@@ -310,9 +310,10 @@ async def randomvc(ctx):
 
          # for x in (client.get_channel((ctx.author.voice.channel).id)).members:
         userInfo = (client.get_channel((ctx.author.voice.channel).id)).members
+        memberList = [str(x) for x in userInfo]
         # print(random.choices([str(x) for x in userInfo]))
             
-        em.add_field(name=f"From {(i for i in [str(x) for x in userInfo])}", value= f"Lucky person is {random.choices([str(x) for x in userInfo])[0]}")
+        em.add_field(name=f"From {memberList}", value= f"Lucky person is {random.choices([str(x) for x in userInfo])[0]}")
 
         await ctx.send(embed=em)
 
