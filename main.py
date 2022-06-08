@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord_slash import SlashCommand
+from discord_slash import SlashCommand, SlashContext
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -27,34 +27,12 @@ secondSheet = clients.open('TOBI.log').worksheet("Reported Log")
 
 intents = discord.Intents(messages=True, guilds=True, members=True)
 client = commands.Bot(command_prefix="=", intents=intents, case_insensitive=True)
+slash = SlashCommand(client, sync_commands=True)
 
 @client.event
 async def on_ready():  # Event client ready
     await client.change_presence(status=discord.Status.idle,activity=discord.Game('=list')) #Change status to =help
-    print(f'Running on {len(client.guilds)} server')
-    print(f'{client.user.name} is online')  # Print TOBI is online
-    print('='*50)
-
-@client.command()  # list commands
-async def list(ctx):  # Contact list word
-    embed = discord.Embed(title = "List commands", description = "Use '=list'",color = ctx.author.color)
-    embed.add_field(name="Basic", value=
-    "TOBI but in json file\n"
-    "**Network**        for Check TOBI Network (.ms)\n"
-    "**spawn**          for spawn TOBI to channel\n"
-    "**weather**        for check weather today\n"
-    "**covid**          for check daily covid\n"
-    "**covid_stat**     for Covid stat in duration by Graph and total\n")
-    embed.add_field(name="Audio", value=
-    "**play 'url'**     for play song\n"
-    "**stop**           for stop song\n"
-    "**pause**          for pause song\n"
-    "**resume**         for resume song\n" )
-    embed.add_field(name="Tobi", value=
-    "**tobiinfo**       for TOBI information\n"
-    "**git**            for GitHub\n"
-    "**updateinfo**     for TOBI update command or function\n")
-    await ctx.send(embed=embed)
+    print(f'TOBI is online')  # Print TOBI is online
 
 @client.event 
 async def on_member_join(member):
@@ -101,6 +79,27 @@ async def on_command_error(ctx, error):
         secondEmbed = discord.Embed(title=f"=help ___", description=f"Description", color=ctx.author.color) 
         await ctx.send(embed=embed)
         await ctx.send(embed=secondEmbed)
+
+@slash.slash(name="lists", description="lists command")
+async def lists(ctx : SlashContext):  # Contact list word
+    """embed = discord.Embed(title = "List commands", description = "Use '=list'",color = ctx.author.color)
+    embed.add_field(name="Basic", value=
+    "TOBI but in json file\n"
+    "**Network**        for Check TOBI Network (.ms)\n"
+    "**spawn**          for spawn TOBI to channel\n"
+    "**weather**        for check weather today\n"
+    "**covid**          for check daily covid\n"
+    "**covid_stat**     for Covid stat in duration by Graph and total\n")
+    embed.add_field(name="Audio", value=
+    "**play 'url'**     for play song\n"
+    "**stop**           for stop song\n"
+    "**pause**          for pause song\n"
+    "**resume**         for resume song\n" )
+    embed.add_field(name="Tobi", value=
+    "**tobiinfo**       for TOBI information\n"
+    "**git**            for GitHub\n"
+    "**updateinfo**     for TOBI update command or function\n")
+    await ctx.send(embed=embed)"""
 
 @client.command()
 async def helps(ctx, *arg):
@@ -225,9 +224,8 @@ async def tobiinfo(ctx):
 
     await ctx.send(embed = em)
 
-@client.command()  # git
-async def git(ctx):
-    print(f'Git command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}')
+@slash.slash(name='git', description='git command')
+async def git(ctx : SlashContext):
     em = discord.Embed(title = "Github repo", description = "Use '=git'",color = ctx.author.color)
     em.add_field(name = "Github",value="https://github.com/T0b1e/Discord.tob.git")
     await ctx.send(embed = em)
@@ -236,8 +234,6 @@ async def git(ctx):
 @commands.has_permissions(ban_members = True)
 async def report(ctx, member : discord.Member, text):
     print(member, text)
-
-
 
     """ print('member',member,'text', text) #member Tob#2144 text (สำรอง)#5857 FIXBUG TODO
     row = 2
