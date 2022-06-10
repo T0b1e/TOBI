@@ -21,9 +21,9 @@ except FileNotFoundError:
     with open('SECRET.txt') as f:
         info = f.readlines()
 
-scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name('tobi-348315-fa9ceafcf825.json', scope)
-clients =  gspread.authorize(creds)
+clients = gspread.authorize(creds)
 sheet = clients.open('TOBI.log').sheet1
 secondSheet = clients.open('TOBI.log').worksheet("Reported Log")
 
@@ -31,10 +31,12 @@ intents = discord.Intents(messages=True, guilds=True, members=True)
 client = commands.Bot(command_prefix="=", intents=intents, case_insensitive=True)
 slash = SlashCommand(client, sync_commands=True)
 
+
 @client.event
 async def on_ready():  # Event client ready
     await client.change_presence(status=discord.Status.idle,activity=discord.Game('=list')) #Change status to =help
     print(f'TOBI is online')  # Print TOBI is online
+
 
 @client.event 
 async def on_member_join(member):
@@ -51,6 +53,7 @@ async def on_member_join(member):
                 pass
         i += 1
 
+
 @client.event
 async def on_member_remove(member): # remove
     i = 1
@@ -62,13 +65,14 @@ async def on_member_remove(member): # remove
             pass
         i += 1
 
+
 @client.event 
 async def on_command_error(ctx, error): 
     if isinstance(error, commands.CommandNotFound):
         print('Command not found') 
         embed = discord.Embed(title=f"Error!!!", description=f"Command not found.", color=ctx.author.color) 
         embed.add_field(name="Basic", value=
-        "TOBI but in json file\n"
+            "TOBI but in json file\n"
         "**Network**        for Check TOBI Network (.ms)\n"
         "**spawn**          for spawn TOBI to channel\n"
         "**report**         for check report user\n"
@@ -81,6 +85,7 @@ async def on_command_error(ctx, error):
         secondEmbed = discord.Embed(title=f"=help ___", description=f"Description", color=ctx.author.color) 
         await ctx.send(embed=embed)
         await ctx.send(embed=secondEmbed)
+
 
 @slash.slash(name="lists", description="lists command")
 async def lists(ctx : SlashContext):  # Contact list word
@@ -103,21 +108,23 @@ async def lists(ctx : SlashContext):  # Contact list word
     "**updateinfo**     for TOBI update command or function\n")
     await ctx.send(embed=embed)"""
 
+
 @client.command()
 async def helps(ctx, *arg):
     embed = discord.Embed(title=f"Help command", description=f"=help __", color=ctx.author.color) 
     if arg == None:
-        embed.add_field('Put command after help command')
-        embed.add_field('=help __')
+        embed.add_field(name='Put command after help command')
+        embed.add_field(value='=help __')
     if arg == 'report':
-        embed.add_field('For report user that do bad thing and if that user got report more than 10 time, The server will be punish you by ban')
-        embed.add_field('=report (user#1234) (reason)')
+        embed.add_field(name='For report user that do bad thing and if that user got report more than 10 time, The server will be punish you by ban')
+        embed.add_field(value='=report (user#1234) (reason)')
     if arg == 'covid':
-        embed.add_field('For checking daily covid-19 in thailand')
-        embed.add_field('=covid (No argument requirment)')
+        embed.add_field(name='For checking daily covid-19 in thailand')
+        embed.add_field(value='=covid (No argument requirment)')
     if arg == 'covid_stat':
-        embed.add_field('For checking stat of covid-19 in thailand')
-        embed.add_field('=covid_stat (No argument requirment)')
+        embed.add_field(name='For checking stat of covid-19 in thailand')
+        embed.add_field(value='=covid_stat (No argume''nt requirment)')
+
 
 def spam(message):
     count = 1
@@ -130,6 +137,7 @@ def spam(message):
         
         if x not in words:
             words.append(x)
+
 
 def nitro(message):
     words = ['Discord Nitro', 'nitro', 'discord nitro', 'free discord nitro', 'free discord', 'free']
@@ -152,11 +160,13 @@ async def on_message(message):
     
     if nitro(message) == True:
         await message.delete()"""
-    
+
+
 @client.command() # ping pong
 async def ping(ctx):
     print(f'Ping command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}') 
     await ctx.send("pong")
+
 
 @client.command()
 async def covid(ctx):
@@ -175,6 +185,7 @@ async def covid(ctx):
     embed.add_field(name='Total recovered',value= text['total_recovered'])
 
     await ctx.send(embed = embed)
+
 
 @client.command()
 async def covid_stat(ctx, key=None):
@@ -210,6 +221,7 @@ async def covid_stat(ctx, key=None):
 
         await ctx.send('Not in a range')
 
+
 @client.command(invoke_without_command = True) #tobiinfo
 async def tobiinfo(ctx):
     print(f'Info command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}')
@@ -226,12 +238,14 @@ async def tobiinfo(ctx):
 
     await ctx.send(embed = em)
 
+
 @client.command()
 async def git(ctx):
     em = discord.Embed(title = "Github repo", description = "Use '=git'",color = ctx.author.color)
     em.add_field(name = "Github (Old version)",value="https://github.com/T0b1e/Discord.tob")
     em.add_field(name = "Github (New version)",value="https://github.com/T0b1e/TOBI")
     await ctx.send(embed = em)
+
 
 @client.command(alias = ['Report', 'REPORT'])
 @commands.has_permissions(ban_members = True)
@@ -304,12 +318,14 @@ async def randoms(ctx,*,message):
     em.add_field(name=f"From {message}", value= f"Lucky Person is {random.choices(message.split())[0]}")
     await ctx.send(embed=em)
 
+
 @client.command()
 async def randomvc(ctx):
     em = discord.Embed(title= f"random user from voice chat {ctx.author.voice.channel}", color=ctx.author.color)
-    if(ctx.author.voice):
 
-         # for x in (client.get_channel((ctx.author.voice.channel).id)).members:
+    if(ctx.author.voice):
+        print('Here')
+        # for x in (client.get_channel((ctx.author.voice.channel).id)).members:
         userInfo = (client.get_channel((ctx.author.voice.channel).id)).members
         memberList = [str(x) for x in userInfo]
         # print(random.choices([str(x) for x in userInfo]))
