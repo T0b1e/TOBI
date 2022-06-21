@@ -170,7 +170,7 @@ async def ping(ctx):
 
 @client.command()
 async def covid(ctx):
-    print(f'Covid command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}') # TODO
+    print(f'Covid command activated by {ctx.author.name} on channel {ctx.channel.name} server {ctx.author.guild.name}')
     response = requests.get('https://covid19.ddc.moph.go.th/api/Cases/today-cases-all')
     data = json.loads(response.text)
     text = data[0]
@@ -249,10 +249,10 @@ async def git(ctx):
 
 @client.command(alias = ['Report', 'REPORT'])
 @commands.has_permissions(ban_members = True)
-async def report(ctx, member : discord.Member, text):
-    print(member, text)
+async def report(ctx, member : discord.Member, *, text):
+    # print(member, text)
 
-    """ print('member',member,'text', text) #member Tob#2144 text (สำรอง)#5857 FIXBUG TODO
+    # print('member',member,'text', text) #member Tob#2144 text (สำรอง)#5857 FIXBUG TODO
     row = 2
     col = 5
     if not text:
@@ -260,16 +260,7 @@ async def report(ctx, member : discord.Member, text):
     else:
         while True:
 
-            if not secondSheet.row_values(row):
-                try:
-                    word = [str(member.guild), str(member), str(member.id), 1, str(' '.join(word))]
-                    secondSheet.insert_row(word, row)
-                    await ctx.send('reported')
-                    break
-                except AttributeError:
-                    await ctx.send('User Not Found (Ex : =report TOBI#7555)')
-                    break
-            if str(member) == str(secondSheet.cell(row, 2).value):
+            if str(member) == str(secondSheet.cell(row, 2).value): # ถ้ามีชื่อ
                 if int(secondSheet.cell(row, 4).value) >= 10:
                     await ctx.send('You Made Too Much Troble')
                     await ctx.send('You receive TIMEOUT(24.hr) in 5 minute :)') 
@@ -279,11 +270,29 @@ async def report(ctx, member : discord.Member, text):
 
                 else:
                     secondSheet.update_cell(row, 4, int(secondSheet.cell(row, 4).value) + 1)
+                    # แก้ที่ว่าถ้าหาก Column ตรงนะั้นมี Sorce อยู่แล้วให้เพิ่มไปอีกช่อง แต่ถ้ามันเกินลิมิตแล้วลบใหม่หมด 20
+                    if not secondSheet.cell(row, col).value:
+                        # print('Here with', col)
+                        secondSheet.update_cell(row, col, str(text))
+                    else:
+                        # print('Here with', col+1)
+                        secondSheet.update_cell(row, col+1, str(text))
                     await ctx.send('reported')
                     break
 
+            if not secondSheet.row_values(row): # ถ้าไม่มีชื่อ
+                try:
+                    word = [str(member.guild), str(member), str(member.id), 1, str(' '.join(word))]
+                    secondSheet.insert_row(word, row)
+                    await ctx.send('reported')
+                    break
+                except AttributeError:
+                    await ctx.send('User Not Found (Ex : =report TOBI#7555)')
+                    break
+            
+
             row += 1
-            col += 1"""
+            col += 1
 
 @client.command()
 async def check_report(ctx, member : discord.Member):
