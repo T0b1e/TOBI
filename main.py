@@ -276,7 +276,7 @@ async def report(ctx, member : discord.Member, *, text):
                         secondSheet.update_cell(row, col, str(text))
                     else:
                         # print('Here with', col+1)
-                        secondSheet.update_cell(row, col+1, str(text))
+                        secondSheet.update_cell(row, col+1, str(text) + str())
                     await ctx.send('reported')
                     break
 
